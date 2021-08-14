@@ -6,9 +6,12 @@ const PasswordSchema = new mongoose.Schema({
     password: String
 });
 
-PasswordSchema.pre('save', async function (next) {
+PasswordSchema.pre('save', async function save(next) {
     try {
         const pass = this;
+
+        if (!this.isModified('password')) return next();
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(pass.password, salt);
         pass.password = hashedPassword;

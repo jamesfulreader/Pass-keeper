@@ -32,12 +32,45 @@ exports.addPassword = async (req, res, next) => {
     }
 }
 
-exports.updatePassword = async (req, res, next) => {
-    const login = await Password.findById(req.params.id);
+exports.getOnePassword = async (req, res, next) => {
+    let passID = req.params.id;
 
-    if (login) {
-        login.password = req.body.password;
+    if (passID) {
+        const login = await Password.findById({ _id: passID });
+        res.json(login);
     } else {
-        res.status(404).json({ error: 'Server error not found' });
+        res.status(404).json({ error: 'Server error, not found' });
     }
+}
+
+exports.updatePassword = async (req, res, next) => {
+    let passID = req.params.id;
+
+    await Password.findByIdAndUpdate({ _id: passID }, { $set: req.body.password }, (error, data) => {
+        if (error) {
+            res.status(500).json({
+                msg: "Something went wrong"
+            });
+        } else {
+            res.status(200).json({
+                msg: "Password updated",
+                data,
+            });
+        }
+    });
+}
+
+exports.deleteLogin = async (req, res, next) => {
+    let passID = req.params.id;
+    await Password.findByIdAndDelete({ _id: passID }, (error, data) => {
+        if (error) {
+            res.status(500).json({
+                msg: "something went wrong"
+            });
+        } else {
+            res.status(200).json({
+                msg: "Pass Deleted"
+            });
+        }
+    })
 }
