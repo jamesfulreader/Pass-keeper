@@ -13,7 +13,11 @@ const app = express();
 // middleware
 app.use(express.json());
 
+app.use(cors());
+
 app.use('/api/v1/passwords', require('./routes/password'));
+
+app.use(express.static(path.join(__dirname, 'client')));
 
 const PORT = process.env.PORT || 5000;
 
